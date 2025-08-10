@@ -4,7 +4,6 @@ This project is a chess game built from scratch using Streamlit. It provides an 
 
 ## Project Structure
 
-
 ```
 chess-streamlit-app
 ├── src
@@ -38,9 +37,7 @@ chess-streamlit-app
 3. Run the Streamlit application:
    ```
    streamlit run src/app.py
-   ```
    or
-   ```
    python -m streamlit run src/app.py
    ```
 
@@ -48,6 +45,6 @@ chess-streamlit-app
 
 Once the application is running, you can interact with the chessboard, make moves, and play against an opponent. The UI will display the current game status and allow you to reset the game as needed.
 
-## Contributors
+## Contributing
 
-Mustapha Muhammad - [mustyog669@gmail.com](mailto:mustyog669@gmail.com)
+Contributions are welcome! Please feel free to submit a pull request or open an issue for any suggestions or improvements.
