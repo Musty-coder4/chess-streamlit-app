@@ -39,6 +39,10 @@ chess-streamlit-app
    ```
    streamlit run src/app.py
    ```
+   or
+   ```
+   python -m streamlit run src/app.py
+   ```
 
 ## Usage
 
