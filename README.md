@@ -19,7 +19,6 @@ chess-streamlit-app
 │       ├── __init__.py       # Initializes the UI package
 │       └── streamlit_ui.py   # Streamlit UI components for the chess game
 ├── requirements.txt           # Lists project dependencies
-├── .gitignore                 # Specifies files to ignore in Git
 └── README.md                  # Documentation for the project
 ```
 
