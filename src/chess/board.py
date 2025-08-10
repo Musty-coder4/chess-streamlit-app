@@ -1,29 +1,64 @@
+from .pieces import King, Queen, Rook, Bishop, Knight, Pawn
+
 class Board:
     def __init__(self):
-        self.board = self.setup_board()
-        self.current_turn = 'white'
+        self.grid = self.create_initial_board()
+        self.last_move = None  # For en passant
 
-    def setup_board(self):
-        # Initialize an 8x8 chessboard with pieces in starting positions
+    def create_initial_board(self):
+        # 8x8 grid, None for empty
         board = [[None for _ in range(8)] for _ in range(8)]
-        # Set up pieces for both players (this is a simplified example)
-        # Add pieces to the board here
+        # Place pieces for both sides
+        # White
+        board[7] = [
+            Rook("white"), Knight("white"), Bishop("white"), Queen("white"),
+            King("white"), Bishop("white"), Knight("white"), Rook("white")
+        ]
+        board[6] = [Pawn("white") for _ in range(8)]
+        # Black
+        board[0] = [
+            Rook("black"), Knight("black"), Bishop("black"), Queen("black"),
+            King("black"), Bishop("black"), Knight("black"), Rook("black")
+        ]
+        board[1] = [Pawn("black") for _ in range(8)]
         return board
 
-    def display(self):
-        # Display the board in a format suitable for Streamlit
-        board_display = ""
-        for row in self.board:
-            board_display += " | ".join([str(piece) if piece else " " for piece in row]) + "\n"
-        return board_display
+    def move_piece(self, from_pos, to_pos, special=None):
+        fx, fy = from_pos
+        tx, ty = to_pos
+        piece = self.grid[fx][fy]
+        # Castling
+        if special == "castle_kingside":
+            self.grid[tx][ty] = piece
+            self.grid[fx][fy] = None
+            # Move rook
+            self.grid[tx][5] = self.grid[tx][7]
+            self.grid[tx][7] = None
+            self.grid[tx][6].has_moved = True
+            self.grid[tx][5].has_moved = True
+        elif special == "castle_queenside":
+            self.grid[tx][ty] = piece
+            self.grid[fx][fy] = None
+            # Move rook
+            self.grid[tx][3] = self.grid[tx][0]
+            self.grid[tx][0] = None
+            self.grid[tx][2].has_moved = True
+            self.grid[tx][3].has_moved = True
+        elif special == "en_passant":
+            self.grid[tx][ty] = piece
+            self.grid[fx][fy] = None
+            # Remove captured pawn
+            self.grid[fx][ty] = None
+        else:
+            self.grid[tx][ty] = piece
+            self.grid[fx][fy] = None
+        # Mark as moved
+        if hasattr(piece, "has_moved"):
+            piece.has_moved = True
+        self.last_move = (from_pos, to_pos)
 
-    def move_piece(self, start_pos, end_pos):
-        # Logic to move a piece from start_pos to end_pos
-        pass
-
-    def is_valid_move(self, start_pos, end_pos):
-        # Validate the move based on the rules of chess
-        pass
-
-    def switch_turn(self):
-        self.current_turn = 'black' if self.current_turn == 'white' else 'white'
+    def get_board_symbols(self):
+        symbols = []
+        for row in self.grid:
+            symbols.append([p.symbol() if p else "." for p in row])
+        return symbols
