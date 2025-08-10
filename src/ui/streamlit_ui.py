@@ -1,6 +1,53 @@
 import streamlit as st
 from chess.game import Game
 from chess.utils import parse_position
+from PIL import Image, ImageDraw, ImageFont
+import io
+
+# Unicode symbols for pieces
+PIECE_SYMBOLS = {
+    "♔": "♔", "♕": "♕", "♖": "♖", "♗": "♗", "♘": "♘", "♙": "♙",
+    "♚": "♚", "♛": "♛", "♜": "♜", "♝": "♝", "♞": "♞", "♟": "♟",
+    ".": ""
+}
+
+def draw_chessboard(board):
+    square_size = 60
+    board_size = 8 * square_size
+    colors = [(240, 217, 181), (181, 136, 99)]  # light, dark
+    img = Image.new("RGB", (board_size, board_size), colors[0])
+    draw = ImageDraw.Draw(img)
+
+    # Try to use a system font that supports chess symbols
+    try:
+        font = ImageFont.truetype("DejaVuSans.ttf", 44)
+    except:
+        font = ImageFont.load_default()
+
+    for i in range(8):
+        for j in range(8):
+            x0 = j * square_size
+            y0 = i * square_size
+            color = colors[(i + j) % 2]
+            draw.rectangle([x0, y0, x0 + square_size, y0 + square_size], fill=color)
+            symbol = board[i][j]
+            if symbol in PIECE_SYMBOLS and PIECE_SYMBOLS[symbol]:
+                bbox = draw.textbbox((0, 0), PIECE_SYMBOLS[symbol], font=font)
+                w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
+                draw.text(
+                    (x0 + (square_size - w) / 2, y0 + (square_size - h) / 2 - 4),
+                    PIECE_SYMBOLS[symbol],
+                    fill=(0, 0, 0),
+                    font=font
+                )
+    # Draw coordinates
+    for i in range(8):
+        # Ranks
+        draw.text((2, i * square_size + 2), str(8 - i), fill=(0, 0, 0), font=font)
+        # Files
+        draw.text((i * square_size + square_size - 18, board_size - 22), "abcdefgh"[i], fill=(0, 0, 0), font=font)
+
+    return img
 
 def main():
     st.title("Chess Game (Streamlit)")
@@ -10,10 +57,13 @@ def main():
     game = st.session_state.game
 
     st.write(f"Turn: {game.current_turn.capitalize()}")
+
+    # Draw the chessboard as an image
     board = game.get_board_symbols()
-    for i, row in enumerate(board):
-        st.write(" ".join(row) + f"  {8-i}")
-    st.write("a b c d e f g h")
+    img = draw_chessboard(board)
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    st.image(buf.getvalue(), use_column_width=False)
 
     st.write(game.status)
 
