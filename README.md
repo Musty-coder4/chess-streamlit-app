@@ -7,18 +7,18 @@ This project is a chess game built from scratch using Streamlit. It provides an 
 
 > -chess-streamlit-app
 >  -src
->    ─app.py                # Entry point of the Streamlit application
+>    ─app.py                
 >    ─ chess
->     ─ __init__.py       # Initializes the chess package
->     ─ board.py          # Contains the Board class for managing the chessboard
->     ─ pieces.py         # Defines classes for different chess pieces
->     ─ game.py           # Manages game logic and rules
->     ─ utils.py          # Utility functions for the chess game
+>     ─ __init__.py       
+>     ─ board.py          
+>     ─ pieces.py
+>     ─ game.py           
+>     ─ utils.py          
 >    ─ ui
->     ─ __init__.py       # Initializes the UI package
->     ─ streamlit_ui.py   # Streamlit UI components for the chess game
->  ─ requirements.txt           # Lists project dependencies
->  ─ README.md                  # Documentation for the project
+>     ─ __init__.py       
+>     ─ streamlit_ui.py   
+>  ─ requirements.txt           
+>  ─ README.md
 
 
 ## Setup Instructions
