@@ -21,18 +21,30 @@ def draw_chessboard(board):
 
     # Try to use a system font that supports chess symbols
     font = None
-    for font_name in ["DejaVuSans.ttf", "Arial Unicode MS.ttf", "Segoe UI Symbol.ttf"]:
+    # Try to load fonts from system or local directory
+    font_paths = [
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",  # Linux common path
+        "C:/Windows/Fonts/DejaVuSans.ttf",  # Windows possible path
+        "C:/Windows/Fonts/Arial Unicode MS.ttf",
+        "C:/Windows/Fonts/seguisym.ttf",  # Segoe UI Symbol font file name
+        "DejaVuSans.ttf",
+        "Arial Unicode MS.ttf",
+        "Segoe UI Symbol.ttf"
+    ]
+    for font_path in font_paths:
         try:
-            font = ImageFont.truetype(font_name, 44)
+            font = ImageFont.truetype(font_path, 44)
             # Test if font supports chess symbols by checking a sample character
             if not font.getmask("♔").getbbox():
-                # If no bounding box, font does not support chess symbols, continue to next font
                 font = None
                 continue
             break
-        except:
+        except Exception as e:
+            # Could add logging here if needed
+            font = None
             continue
     if font is None:
+        # Fallback to default font (likely no chess symbols)
         font = ImageFont.load_default()
 
     for i in range(8):
@@ -52,11 +64,26 @@ def draw_chessboard(board):
                     font=font
                 )
     # Draw coordinates
+    # Load smaller font for coordinates
+    coord_font = None
+    for font_path in font_paths:
+        try:
+            coord_font = ImageFont.truetype(font_path, 14)
+            if not coord_font.getmask("8").getbbox():
+                coord_font = None
+                continue
+            break
+        except:
+            coord_font = None
+            continue
+    if coord_font is None:
+        coord_font = ImageFont.load_default()
+
     for i in range(8):
         # Ranks
-        draw.text((2, i * square_size + 2), str(8 - i), fill=(0, 0, 0), font=font)
+        draw.text((2, i * square_size + 2), str(8 - i), fill=(0, 0, 0), font=coord_font)
         # Files
-        draw.text((i * square_size + square_size - 18, board_size - 22), "abcdefgh"[i], fill=(0, 0, 0), font=font)
+        draw.text((i * square_size + square_size - 12, board_size - 18), "abcdefgh"[i], fill=(0, 0, 0), font=coord_font)
 
     return img
 
