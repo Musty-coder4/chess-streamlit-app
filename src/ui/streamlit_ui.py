@@ -1,25 +1,15 @@
- import streamlit as st
+import streamlit as st
 from chess.game import Game
 from chess.utils import parse_position
 from PIL import Image, ImageDraw, ImageFont
 import io
 import os
 
-# Map board symbols to image filenames
-PIECE_IMAGES = {
-    "♔": "white_king.png",
-    "♕": "white_queen.png",
-    "♖": "white_rook.png",
-    "♗": "white_bishop.png",
-    "♘": "white_knight.png",
-    "♙": "white_pawn.png",
-    "♚": "black_king.png",
-    "♛": "black_queen.png",
-    "♜": "black_rook.png",
-    "♝": "black_bishop.png",
-    "♞": "black_knight.png",
-    "♟": "black_pawn.png",
-    ".": None
+# Unicode symbols for pieces
+PIECE_SYMBOLS = {
+    "♔": "♔", "♕": "♕", "♖": "♖", "♗": "♗", "♘": "♘", "♙": "♙",
+    "♚": "♚", "♛": "♛", "♜": "♜", "♝": "♝", "♞": "♞", "♟": "♟",
+    ".": ""
 }
 
 def draw_chessboard(board):
@@ -29,10 +19,21 @@ def draw_chessboard(board):
     img = Image.new("RGB", (board_size, board_size), colors[0])
     draw = ImageDraw.Draw(img)
 
-    # Load piece images once and cache
-    piece_images_cache = {}
-    import os
-    images_path = os.path.join(os.getcwd(), "chess-streamlit-app", "images")
+    # Try to use a system font that supports chess symbols
+    font = None
+    for font_name in ["DejaVuSans.ttf", "Arial Unicode MS.ttf", "Segoe UI Symbol.ttf"]:
+        try:
+            font = ImageFont.truetype(font_name, 44)
+            # Test if font supports chess symbols by checking a sample character
+            if not font.getmask("♔").getbbox():
+                # If no bounding box, font does not support chess symbols, continue to next font
+                font = None
+                continue
+            break
+        except:
+            continue
+    if font is None:
+        font = ImageFont.load_default()
 
     for i in range(8):
         for j in range(8):
@@ -41,23 +42,16 @@ def draw_chessboard(board):
             color = colors[(i + j) % 2]
             draw.rectangle([x0, y0, x0 + square_size, y0 + square_size], fill=color)
             symbol = board[i][j]
-            image_file = PIECE_IMAGES.get(symbol)
-            if image_file:
-                if image_file not in piece_images_cache:
-                    image_path = os.path.join(images_path, image_file)
-                    print(f"Loading image for {symbol}: {image_path}")
-                    try:
-                        piece_img = Image.open(image_path).resize((square_size, square_size), Image.ANTIALIAS)
-                        piece_images_cache[image_file] = piece_img
-                    except Exception as e:
-                        print(f"Failed to load image {image_path}: {e}")
-                        piece_images_cache[image_file] = None
-                piece_img = piece_images_cache.get(image_file)
-                if piece_img:
-                    img.paste(piece_img, (x0, y0), piece_img.convert("RGBA"))
-
+            if symbol in PIECE_SYMBOLS and PIECE_SYMBOLS[symbol]:
+                bbox = draw.textbbox((0, 0), PIECE_SYMBOLS[symbol], font=font)
+                w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
+                draw.text(
+                    (x0 + (square_size - w) / 2, y0 + (square_size - h) / 2 - 4),
+                    PIECE_SYMBOLS[symbol],
+                    fill=(0, 0, 0),
+                    font=font
+                )
     # Draw coordinates
-    font = ImageFont.load_default()
     for i in range(8):
         # Ranks
         draw.text((2, i * square_size + 2), str(8 - i), fill=(0, 0, 0), font=font)
