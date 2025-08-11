@@ -35,12 +35,21 @@ def validate_move(start_pos, end_pos, board):
         # Capture
         if abs(dc) == 1 and dr == direction and target and target[0] != color:
             return True
+        # En passant
+        if abs(dc) == 1 and dr == direction and not target and abs(start_pos[0] - end_pos[0]) == 1 and abs(start_pos[1] - end_pos[1]) == 1:
+            # Check if en passant capture is possible
+            captured_pawn_row = start_pos[0] + direction
+            captured_pawn_col = end_pos[1]
+            if 0 <= captured_pawn_row < 8 and 0 <= captured_pawn_col < 8:
+                captured_pawn = board[captured_pawn_row][captured_pawn_col]
+                if captured_pawn and captured_pawn[0] != color and captured_pawn[1] == 'P':
+                    return True
         return False
 
     if ptype == 'R':  # Rook
         if dr == 0 or dc == 0:
-            step_r = (dr > 0) - (dr < 0)
-            step_c = (dc > 0) - (dc < 0)
+            step_r = (dr > 0) - (dr < 0) if dr != 0 else 0
+            step_c = (dc > 0) - (dc < 0) if dc != 0 else 0
             r, c = start_pos[0] + step_r, start_pos[1] + step_c
             while (r, c) != end_pos:
                 if board[r][c]:
@@ -84,14 +93,20 @@ def validate_move(start_pos, end_pos, board):
     if ptype == 'K':  # King
         if max(abs(dr), abs(dc)) == 1:
             return True
-        # Castling not implemented
+        # Castling
+        if abs(dc) == 2 and dr == 0:
+            # Kingside castling
+            if dc == 2 and start_pos[1] == 4 and not board[start_pos[0]][5] and not board[start_pos[0]][6] and board[start_pos[0]][7] and board[start_pos[0]][7][1] == 'R':
+                return True
+            # Queenside castling
+            if dc == -2 and start_pos[1] == 4 and not board[start_pos[0]][3] and not board[start_pos[0]][2] and not board[start_pos[0]][1] and board[start_pos[0]][0] and board[start_pos[0]][0][1] == 'R':
+                return True
         return False
 
     return False
 
 def convert_coordinates(coord):
-    # Convert chessboard coordinates from algebraic notation to array indices
-    # e.g., 'e2' -> (6, 4)
+    """Convert chessboard coordinates from algebraic notation to array indices."""
     if len(coord) != 2:
         raise ValueError("Invalid coordinate format")
     file, rank = coord[0], coord[1]
@@ -102,31 +117,36 @@ def convert_coordinates(coord):
     return (row, col)
 
 def display_board(board):
-    # Create a visual representation of the chessboard
+    """Create a visual representation of the chessboard."""
     board_str = "  a b c d e f g h\n"
     for i, row in enumerate(board):
         board_str += str(8 - i) + " "
         for piece in row:
-            board_str += (piece if piece else '.') + " "
+            if piece:
+                symbol = piece[0].upper() + piece[1].upper()
+                board_str += symbol + " "
+            else:
+                board_str += ". "
         board_str += str(8 - i) + "\n"
     board_str += "  a b c d e f g h"
     return board_str
 
 def is_valid_position(pos):
-    # Check if the given position is within the bounds of the chessboard
+    """Check if the given position is within the bounds of the chessboard."""
     if not isinstance(pos, (tuple, list)) or len(pos) != 2:
         return False
     row, col = pos
     return 0 <= row < 8 and 0 <= col < 8
 
 def get_piece_at_position(pos, board):
-    # Retrieve the piece located at the specified position on the board
+    """Retrieve the piece located at the specified position on the board."""
     row, col = pos
     if 0 <= row < 8 and 0 <= col < 8:
         return board[row][col]
     return None
 
 def parse_position(pos_str):
+    """Parse chess algebraic notation to board indices."""
     files = "abcdefgh"
     if len(pos_str) != 2:
         return None
