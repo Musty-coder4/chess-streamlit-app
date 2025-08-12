@@ -50,5 +50,5 @@ Once the application is running, you can interact with the chessboard, make move
 
 ## Contributors
 
--Mustapha Muhammad - [mustyog669@gmail.com](mailto:mustyog669@gmail.com)
--Emea obinna kalu -[obinnakalu263@gmail.com](mailto:obinnakalu263@gmail.com)
+Mustapha Muhammad - [mustyog669@gmail.com](mailto:mustyog669@gmail.com)
+Emea obinna kalu -[obinnakalu263@gmail.com](mailto:obinnakalu263@gmail.com)
