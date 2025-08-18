@@ -58,4 +58,4 @@ Yusuf Faisal Ismail - [yusufaisal321@gmail.com](mailto:yusufaisal321@gmail.com)
 
 Princess Adelekan-Jenfa - [princessaderojuu@gmail.com](mailto:princessaderojuu@gmail.com)
 
-Fuad Ayomide Atoyebi - [mizefuddy2104@gmail.Com](mailto:mizefuddy2104@gmail.Com)
+Fuad Ayomide Atoyebi - [mizefuddy2104@gmail.Com](mailto:mizefuddy2104@gmail.com)
