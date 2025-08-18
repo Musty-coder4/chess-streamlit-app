@@ -53,3 +53,5 @@ Once the application is running, you can interact with the chessboard, make move
 Mustapha Muhammad - [mustyog669@gmail.com](mailto:mustyog669@gmail.com)
 
 Emea obinna kalu -[obinnakalu263@gmail.com](mailto:obinnakalu263@gmail.com)
+
+Yusuf Faisal Ismail -[yusufaisal321@gmail.com](mailto:yusufaisal321@gmail.com)
